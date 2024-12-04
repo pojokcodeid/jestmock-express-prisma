@@ -3,22 +3,24 @@ import { mockDeep, mockReset } from "jest-mock-extended";
 import prisma from "../src/prismaClient.js";
 import app from "../src/server.js";
 
+// Membuat mock untuk modul prismaClient dengan implementasi mock menggunakan jest
 jest.mock("../src/prismaClient.js", () => ({
   __esModule: true,
   default: mockDeep(),
 }));
-
+// Dijalankan setiap sebelum test,
+// mereset state dari mock prisma untuk menghindari efek samping antar test
 beforeEach(() => {
   mockReset(prisma);
 });
-
+// Dijalan sekali sebelum semua test, memulai server aplikasi di port 4000
 beforeAll((done) => {
   app.listen(4000, () => {
     global.agent = request.agent(app);
     done();
   });
 });
-
+// Dijalan sekali setelah semua test, memutuskan koneksi prisma client dari database
 afterAll(async () => {
   await prisma.$disconnect();
 });
